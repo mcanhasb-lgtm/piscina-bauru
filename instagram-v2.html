@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Posts Piscinas">
+<title>Posts — Limpeza de Piscinas Bauru</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #00d97e;
+    --azul: #0ea5e9;
+    --fundo: #060d14;
+    --card: #0c1520;
+    --card2: #101c28;
+    --borda: #162030;
+    --texto: #dceeff;
+    --muted: #4a6580;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--fundo);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--texto);
+    min-height: 100vh;
+    padding-bottom: 50px;
+  }
+
+  header {
+    padding: 24px 18px 18px;
+    border-bottom: 1px solid var(--borda);
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--verde), var(--azul));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px #00d97e25;
+  }
+
+  .logo-texto h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+  .logo-texto p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  main {
+    padding: 24px 18px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--verde);
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  /* Fotos antes/depois */
+  .fotos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .foto-slot {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 14px;
+    border: 2px dashed var(--borda);
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .foto-slot:active { border-color: var(--verde); }
+  .foto-slot.tem-foto { border-style: solid; border-color: var(--borda); }
+
+  .foto-slot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  .foto-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, #060d14ee 0%, transparent 50%);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 10px;
+  }
+
+  .foto-tag {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-block;
+    align-self: flex-start;
+  }
+  .tag-antes { background: #ef444420; color: #ef4444; border: 1px solid #ef444440; }
+  .tag-depois { background: #00d97e20; color: var(--verde); border: 1px solid #00d97e40; }
+
+  .foto-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 1;
+  }
+  .foto-placeholder .icone { font-size: 28px; opacity: 0.4; }
+  .foto-placeholder .texto {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+  .foto-placeholder .subtexto {
+    font-size: 10px;
+    color: var(--muted);
+    opacity: 0.6;
+    text-align: center;
+  }
+
+  .btn-remover {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 26px; height: 26px;
+    background: #060d14cc;
+    border: 1px solid var(--borda);
+    border-radius: 50%;
+    color: #ef4444;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10;
+  }
+
+  input[type=file] { display: none; }
+
+  /* Campo de detalhes */
+  .campo-detalhe {
+    margin-bottom: 20px;
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: var(--texto);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    outline: none;
+    resize: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  textarea:focus { border-color: #00d97e40; }
+  textarea::placeholder { color: var(--muted); }
+
+  /* Botão gerar */
+  .btn-gerar {
+    width: 100%;
+    background: var(--verde);
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    color: #040c10;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 24px #00d97e25;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-gerar:disabled {
+    background: var(--borda);
+    color: var(--muted);
+    box-shadow: none;
+  }
+  .btn-gerar:active:not(:disabled) { transform: scale(0.98); }
+
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid #04521e;
+    border-top-color: #040c10;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Resultado */
+  .resultado {
+    margin-top: 24px;
+    animation: surgir 0.4s ease;
+  }
+  @keyframes surgir { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card-resultado {
+    background: var(--card);
+    border: 1px solid var(--borda);
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .resultado-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .btn-copiar {
+    background: transparent;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 7px 16px;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-copiar.copiado {
+    border-color: var(--verde);
+    color: var(--verde);
+    background: #00d97e10;
+  }
+
+  .texto-legenda {
+    color: #b8d4f0;
+    font-size: 14px;
+    line-height: 1.85;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .btn-nova {
+    width: 100%;
+    margin-top: 12px;
+    background: transparent;
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+    padding: 13px;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    cursor: pointer;
+  }
+
+  .aviso {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 10px;
+    line-height: 1.6;
+  }
+
+  .erro { color: #ff6b6b; font-size: 13px; margin-top: 12px; text-align: center; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">📸</div>
+  <div class="logo-texto">
+    <h1>LIMPEZA DE PISCINAS BAURU</h1>
+    <p>Gerador de posts para Instagram</p>
+  </div>
+</header>
+
+<main>
+  <!-- Fotos -->
+  <span class="label">FOTOS DO SERVIÇO</span>
+  <div class="fotos-grid">
+
+    <!-- Antes -->
+    <div class="foto-slot" id="slotAntes" onclick="abrirGaleria('antes')">
+      <input type="file" id="inputAntes" accept="image/*" onchange="carregarFoto('antes', event)">
+      <div class="foto-placeholder" id="placeholderAntes">
+        <div class="icone">📷</div>
+        <div class="texto">ANTES</div>
+        <div class="subtexto">Toque para adicionar</div>
+      </div>
+    </div>
+
+    <!-- Depois -->
+    <div class="foto-slot" id="slotDepois" onclick="abrirGaleria('depois')">
+      <input type="file" id="inputDepois" accept="image/*" onchange="carregarFoto('depois', event)">
+      <div class="foto-placeholder" id="placeholderDepois">
+        <div class="icone">✨</div>
+        <div class="texto">DEPOIS</div>
+        <div class="subtexto">Toque para adicionar</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Detalhes opcionais -->
+  <div class="campo-detalhe">
+    <span class="label">DETALHES EXTRAS <span style="color:var(--muted);font-weight:400;letter-spacing:0">(opcional)</span></span>
+    <textarea id="detalhes" rows="3" placeholder="Ex: piscina ficou 3 semanas sem tratamento, cliente pediu urgência..."></textarea>
+  </div>
+
+  <button class="btn-gerar" id="btnGerar" onclick="gerarLegenda()" disabled>
+    Adicione ao menos uma foto
+  </button>
+
+  <p class="aviso">Suas fotos são enviadas apenas para gerar a legenda e não são armazenadas.</p>
+
+  <div id="resultado" style="display:none"></div>
+</main>
+
+<script>
+let fotoAntes = null;
+let fotoDepois = null;
+
+function abrirGaleria(tipo) {
+  document.getElementById(`input${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`).click();
+}
+
+function carregarFoto(tipo, event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const base64 = e.target.result;
+    const id = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+
+    if (tipo === 'antes') fotoAntes = base64;
+    else fotoDepois = base64;
+
+    const slot = document.getElementById(`slot${id}`);
+    const placeholder = document.getElementById(`placeholder${id}`);
+
+    // Remover imagem anterior se existir
+    const imgAnterior = slot.querySelector('img');
+    const overlayAnterior = slot.querySelector('.foto-overlay');
+    const btnAnterior = slot.querySelector('.btn-remover');
+    if (imgAnterior) imgAnterior.remove();
+    if (overlayAnterior) overlayAnterior.remove();
+    if (btnAnterior) btnAnterior.remove();
+
+    placeholder.style.display = 'none';
+    slot.classList.add('tem-foto');
+
+    const img = document.createElement('img');
+    img.src = base64;
+    slot.appendChild(img);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'foto-overlay';
+    const tag = document.createElement('span');
+    tag.className = `foto-tag tag-${tipo}`;
+    tag.textContent = tipo.toUpperCase();
+    overlay.appendChild(tag);
+    slot.appendChild(overlay);
+
+    const btnRem = document.createElement('button');
+    btnRem.className = 'btn-remover';
+    btnRem.innerHTML = '×';
+    btnRem.onclick = (e) => { e.stopPropagation(); removerFoto(tipo); };
+    slot.appendChild(btnRem);
+
+    atualizarBotao();
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function removerFoto(tipo) {
+  const id = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+  if (tipo === 'antes') fotoAntes = null;
+  else fotoDepois = null;
+
+  const slot = document.getElementById(`slot${id}`);
+  const placeholder = document.getElementById(`placeholder${id}`);
+
+  slot.querySelector('img')?.remove();
+  slot.querySelector('.foto-overlay')?.remove();
+  slot.querySelector('.btn-remover')?.remove();
+  slot.classList.remove('tem-foto');
+  placeholder.style.display = 'flex';
+
+  atualizarBotao();
+}
+
+function atualizarBotao() {
+  const btn = document.getElementById('btnGerar');
+  if (fotoAntes || fotoDepois) {
+    btn.disabled = false;
+    btn.innerHTML = 'Gerar legenda';
+  } else {
+    btn.disabled = true;
+    btn.innerHTML = 'Adicione ao menos uma foto';
+  }
+}
+
+function base64ParaMediaType(base64) {
+  const match = base64.match(/^data:([^;]+);base64,(.+)$/);
+  return match ? { mediaType: match[1], data: match[2] } : null;
+}
+
+async function gerarLegenda() {
+  const btn = document.getElementById('btnGerar');
+  const resultado = document.getElementById('resultado');
+  const detalhes = document.getElementById('detalhes').value.trim();
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>Analisando fotos...';
+  resultado.style.display = 'none';
+
+  try {
+    // Montar conteúdo da mensagem com as imagens
+    const conteudo = [];
+
+    if (fotoAntes) {
+      const f = base64ParaMediaType(fotoAntes);
+      if (f) {
+        conteudo.push({ type: 'text', text: 'Esta é a foto do ANTES:' });
+        conteudo.push({ type: 'image', source: { type: 'base64', media_type: f.mediaType, data: f.data } });
+      }
+    }
+
+    if (fotoDepois) {
+      const f = base64ParaMediaType(fotoDepois);
+      if (f) {
+        conteudo.push({ type: 'text', text: 'Esta é a foto do DEPOIS:' });
+        conteudo.push({ type: 'image', source: { type: 'base64', media_type: f.mediaType, data: f.data } });
+      }
+    }
+
+    let instrucao = 'Analise as fotos e crie uma legenda para o Instagram.';
+    if (fotoAntes && fotoDepois) instrucao = 'Analise as fotos de antes e depois e crie uma legenda para o Instagram destacando a transformação.';
+    else if (fotoAntes) instrucao = 'Analise a foto do estado inicial da piscina e crie uma legenda para o Instagram.';
+    else if (fotoDepois) instrucao = 'Analise a foto do resultado final da piscina e crie uma legenda para o Instagram.';
+
+    if (detalhes) instrucao += ` Informação adicional do prestador: ${detalhes}`;
+
+    conteudo.push({ type: 'text', text: instrucao });
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `Você é um especialista em marketing para pequenas empresas no Instagram brasileiro.
+Crie legendas para o perfil @LimpezaDePiscinasBauru, empresa de limpeza de piscinas em Bauru, SP.
+
+Regras:
+- Analise as fotos cuidadosamente e baseie a legenda no que realmente aparece nelas
+- Cada legenda deve ser única e pensada para aquelas fotos específicas
+- Tom profissional mas próximo, como um prestador de serviço confiável da cidade
+- Sempre mencione Bauru ou região de Bauru
+- Inclua call-to-action claro (ex: "Manda mensagem", "Me chama no WhatsApp")
+- De 10 a 15 hashtags relevantes no final, cada uma em linha separada
+- Máximo 150 palavras no texto principal
+- No máximo 3 emojis por legenda
+- Retorne APENAS a legenda pronta, sem explicações`,
+        messages: [{ role: 'user', content: conteudo }]
+      })
+    });
+
+    const data = await resp.json();
+    const texto = (data.content || []).map(b => b.text || '').join('');
+
+    if (!texto) throw new Error('Resposta vazia');
+
+    resultado.style.display = 'block';
+    resultado.innerHTML = `
+      <div class="card-resultado">
+        <div class="resultado-header">
+          <span class="label" style="margin:0">LEGENDA GERADA</span>
+          <button class="btn-copiar" id="btnCopiar" onclick="copiar()">COPIAR</button>
+        </div>
+        <div class="texto-legenda" id="textoLegenda">${esc(texto)}</div>
+      </div>
+      <button class="btn-nova" onclick="novaLegenda()">Gerar outra versão</button>
+    `;
+
+  } catch(e) {
+    resultado.style.display = 'block';
+    resultado.innerHTML = '<p class="erro">Erro ao gerar legenda. Verifique sua conexão e tente novamente.</p>';
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = 'Gerar legenda';
+}
+
+async function novaLegenda() {
+  await gerarLegenda();
+}
+
+function copiar() {
+  const texto = document.getElementById('textoLegenda')?.innerText;
+  if (!texto) return;
+  navigator.clipboard.writeText(texto).then(() => {
+    const btn = document.getElementById('btnCopiar');
+    btn.textContent = 'COPIADO!';
+    btn.classList.add('copiado');
+    setTimeout(() => { btn.textContent = 'COPIAR'; btn.classList.remove('copiado'); }, 2500);
+  });
+}
+
+function esc(t) {
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
