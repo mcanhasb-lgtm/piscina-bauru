@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Controle Piscinas">
+<title>Controle Técnico — Limpeza de Piscinas Bauru</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --azul: #38bdf8;
+    --verde: #34d399;
+    --amarelo: #fbbf24;
+    --vermelho: #f87171;
+    --fundo: #07101a;
+    --card: #0d1d2b;
+    --card2: #112436;
+    --borda: #1a3448;
+    --borda2: #224059;
+    --texto: #e2f0ff;
+    --muted: #4a7a99;
+    --muted2: #2d5570;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--fundo);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--texto);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  /* Textura de fundo */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 10% 10%, #38bdf808 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 80%, #34d39906 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    position: relative;
+    z-index: 1;
+    padding: 22px 18px 16px;
+    border-bottom: 1px solid var(--borda);
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-icon {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--azul), var(--verde));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .logo-texto h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--texto);
+    text-transform: uppercase;
+  }
+  .logo-texto p { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* ===== VIEWS ===== */
+  .view { position: relative; z-index: 1; }
+
+  /* ===== LISTA ===== */
+  .barra-add {
+    display: flex;
+    gap: 10px;
+    padding: 18px 16px 0;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  input[type=text], input[type=number] {
+    background: var(--card);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--texto);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  input:focus { border-color: var(--azul); }
+  input::placeholder { color: var(--muted2); }
+
+  .btn-add {
+    background: var(--azul);
+    border: none;
+    border-radius: 10px;
+    width: 44px; height: 44px;
+    color: #07101a;
+    font-size: 22px;
+    font-weight: 900;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .secao {
+    padding: 16px 16px 0;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--azul);
+    margin-bottom: 12px;
+    display: block;
+    text-transform: uppercase;
+  }
+
+  .cliente-card {
+    background: var(--card);
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .cliente-card:active { background: var(--card2); border-color: var(--borda2); }
+
+  .cliente-nome {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--texto);
+    margin-bottom: 4px;
+  }
+  .cliente-meta { font-size: 11px; color: var(--muted); }
+
+  .badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .badge-ok { background: #34d39915; color: var(--verde); border: 1px solid #34d39940; }
+  .badge-atencao { background: #f8717115; color: var(--vermelho); border: 1px solid #f8717140; }
+  .badge-sem { background: #ffffff08; color: var(--muted); border: 1px solid var(--borda); }
+
+  .vazio {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 40px 0;
+    line-height: 1.8;
+  }
+
+  /* ===== DETALHE ===== */
+  .nav-bar {
+    position: relative;
+    z-index: 1;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--borda);
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 100%;
+  }
+
+  .btn-voltar {
+    background: transparent;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 7px 12px;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .nav-titulo {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .btn-primario {
+    background: var(--azul);
+    border: none;
+    border-radius: 9px;
+    padding: 9px 14px;
+    color: #07101a;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* Registro card no histórico */
+  .reg-card {
+    background: var(--card);
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+    animation: surgir 0.3s ease;
+  }
+  @keyframes surgir { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .reg-data {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+
+  /* Foto miniatura no histórico */
+  .reg-foto {
+    width: 100%;
+    max-height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid var(--borda);
+  }
+
+  .params-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .param-box {
+    background: var(--card2);
+    border-radius: 8px;
+    padding: 8px 10px;
+    text-align: center;
+  }
+
+  .param-box .p-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .param-box .p-valor {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .p-valor.ok { color: var(--verde); }
+  .p-valor.atencao { color: var(--vermelho); }
+  .p-valor.neutro { color: var(--muted); font-size: 12px; }
+
+  .reg-obs {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    padding-top: 8px;
+    border-top: 1px solid var(--borda);
+    line-height: 1.6;
+  }
+
+  /* ===== FORM NOVO REGISTRO ===== */
+  .form-wrap {
+    padding: 18px 16px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* Slot de foto */
+  .foto-slot {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 12px;
+    border: 2px dashed var(--borda2);
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .foto-slot:active { border-color: var(--azul); }
+  .foto-slot.tem-foto { border-style: solid; border-color: var(--borda); }
+
+  .foto-slot img {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  .foto-slot .overlay-escuro {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, #07101aee 0%, #07101a80 40%, transparent 70%);
+  }
+
+  .foto-placeholder {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 8px;
+    z-index: 1;
+  }
+  .foto-placeholder .icone { font-size: 32px; opacity: 0.35; }
+  .foto-placeholder .txt {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .foto-slot .status-analise {
+    position: absolute;
+    bottom: 10px; left: 10px; right: 10px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chip-analisado {
+    background: #34d39920;
+    border: 1px solid #34d39950;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--verde);
+  }
+
+  .btn-rem-foto {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 28px; height: 28px;
+    background: #07101acc;
+    border: 1px solid var(--borda);
+    border-radius: 50%;
+    color: var(--vermelho);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10;
+  }
+
+  input[type=file] { display: none; }
+
+  /* Campos de parâmetros */
+  .campos-params {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .campo-param label {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--azul);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .campo-param .faixa {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  .campo-param input {
+    width: 100%;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 10px 8px;
+    border-radius: 10px;
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--texto);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    resize: none;
+    -webkit-appearance: none;
+    line-height: 1.6;
+  }
+  textarea::placeholder { color: var(--muted2); }
+  textarea:focus { border-color: #38bdf840; }
+
+  .btn-analisar {
+    width: 100%;
+    background: var(--card2);
+    border: 1px solid var(--borda2);
+    border-radius: 10px;
+    padding: 12px;
+    color: var(--azul);
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.15s;
+  }
+  .btn-analisar:disabled { opacity: 0.4; cursor: default; }
+  .btn-analisar:active:not(:disabled) { background: #38bdf815; }
+
+  .btn-salvar {
+    width: 100%;
+    background: var(--verde);
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    color: #07101a;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 6px;
+    box-shadow: 0 4px 20px #34d39920;
+  }
+  .btn-salvar:active { transform: scale(0.98); }
+
+  .msg-ok {
+    text-align: center;
+    color: var(--verde);
+    font-size: 12px;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 1px;
+  }
+  .msg-ok.vis { opacity: 1; }
+
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid var(--borda2);
+    border-top-color: var(--azul);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .aviso-ia {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 14px;
+    line-height: 1.6;
+    padding: 0 4px;
+  }
+  .aviso-ia span { color: var(--amarelo); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">📋</div>
+  <div class="logo-texto">
+    <h1>Limpeza de Piscinas Bauru</h1>
+    <p>Controle técnico de clientes</p>
+  </div>
+</header>
+
+<!-- VIEW: Lista -->
+<div id="view-lista" class="view">
+  <div class="barra-add">
+    <input type="text" id="inputNome" placeholder="Nome do cliente..." style="flex:1"
+      onkeydown="if(event.key==='Enter') adicionarCliente()">
+    <button class="btn-add" onclick="adicionarCliente()">+</button>
+  </div>
+  <div class="secao" style="margin-top:16px">
+    <span class="label">Clientes</span>
+    <div id="listaClientes"></div>
+  </div>
+</div>
+
+<!-- VIEW: Detalhe -->
+<div id="view-detalhe" class="view" style="display:none">
+  <div class="nav-bar">
+    <button class="btn-voltar" onclick="irLista()">← Voltar</button>
+    <div class="nav-titulo" id="detalheNome"></div>
+    <button class="btn-primario" onclick="irNovoReg()">+ Registro</button>
+  </div>
+  <div class="secao" style="margin-top:16px">
+    <span class="label">Histórico</span>
+    <div id="historicoLista"></div>
+  </div>
+</div>
+
+<!-- VIEW: Novo Registro -->
+<div id="view-novo-reg" class="view" style="display:none">
+  <div class="nav-bar">
+    <button class="btn-voltar" onclick="irDetalhe()">← Voltar</button>
+    <div class="nav-titulo">Novo Registro</div>
+  </div>
+  <div class="form-wrap">
+
+    <!-- Foto do teste -->
+    <span class="label">Foto do teste de água</span>
+    <div class="foto-slot" id="fotoSlot" onclick="document.getElementById('inputFoto').click()">
+      <input type="file" id="inputFoto" accept="image/*" onchange="carregarFoto(event)">
+      <div class="foto-placeholder" id="fotoPlaceholder">
+        <div class="icone">🧪</div>
+        <div class="txt">TOQUE PARA FOTOGRAFAR<br>O TESTE DE ÁGUA</div>
+      </div>
+    </div>
+
+    <p class="aviso-ia"><span>Dica:</span> Após adicionar a foto, use o botão abaixo para a IA detectar os valores automaticamente. Você poderá editar antes de salvar.</p>
+
+    <button class="btn-analisar" id="btnAnalisar" onclick="analisarFoto()" disabled>
+      <div class="spinner" id="spinnerAnalisar" style="display:none"></div>
+      <span id="txtAnalisar">Analisar foto com IA</span>
+    </button>
+
+    <!-- Parâmetros -->
+    <span class="label">Parâmetros <span style="color:var(--muted);font-weight:400;letter-spacing:0;font-family:'DM Sans',sans-serif;font-size:11px">(edite se necessário)</span></span>
+    <div class="campos-params">
+      <div class="campo-param">
+        <label>PH <span class="faixa">7,2–7,6</span></label>
+        <input type="number" step="0.1" id="fPh" placeholder="—">
+      </div>
+      <div class="campo-param">
+        <label>CLORO <span class="faixa">1–3 ppm</span></label>
+        <input type="number" step="0.1" id="fCloro" placeholder="—">
+      </div>
+      <div class="campo-param">
+        <label>ALCAL. <span class="faixa">80–120</span></label>
+        <input type="number" step="1" id="fAlcal" placeholder="—">
+      </div>
+    </div>
+
+    <!-- Observações -->
+    <span class="label" style="margin-top:4px">Observações <span style="color:var(--muted);font-weight:400;letter-spacing:0;font-family:'DM Sans',sans-serif;font-size:11px">(opcional)</span></span>
+    <textarea id="fObs" rows="3" placeholder="Anotações do serviço..."></textarea>
+
+    <button class="btn-salvar" onclick="salvarRegistro()">Salvar registro</button>
+    <div class="msg-ok" id="msgOk">Registro salvo!</div>
+  </div>
+</div>
+
+<script>
+const CHAVE = 'lpb_v3';
+let clientes = [];
+let clienteId = null;
+let fotoBase64 = null;
+
+const PARAMS = [
+  { key: 'ph', label: 'pH', min: 7.2, max: 7.6, unit: '' },
+  { key: 'cloro', label: 'Cloro', min: 1.0, max: 3.0, unit: ' ppm' },
+  { key: 'alcal', label: 'Alcal.', min: 80, max: 120, unit: ' ppm' },
+];
+
+/* ---- Storage ---- */
+function carregar() {
+  try { clientes = JSON.parse(localStorage.getItem(CHAVE)) || []; }
+  catch { clientes = []; }
+  renderLista();
+}
+function salvar() { localStorage.setItem(CHAVE, JSON.stringify(clientes)); }
+
+/* ---- Status ---- */
+function statusCliente(c) {
+  if (!c.historico?.length) return 'sem';
+  const u = c.historico[0];
+  for (const p of PARAMS) {
+    if (u[p.key] !== '' && u[p.key] !== undefined) {
+      const v = parseFloat(u[p.key]);
+      if (v < p.min || v > p.max) return 'atencao';
+    }
+  }
+  return 'ok';
+}
+
+/* ---- Render Lista ---- */
+function renderLista() {
+  const el = document.getElementById('listaClientes');
+  if (!clientes.length) {
+    el.innerHTML = '<div class="vazio">Nenhum cliente ainda.<br>Adicione o primeiro acima.</div>';
+    return;
+  }
+  el.innerHTML = clientes.map(c => {
+    const st = statusCliente(c);
+    const bClass = st === 'ok' ? 'badge-ok' : st === 'atencao' ? 'badge-atencao' : 'badge-sem';
+    const bTxt = st === 'ok' ? 'OK' : st === 'atencao' ? 'ATENÇÃO' : 'SEM DADOS';
+    const qtd = c.historico?.length || 0;
+    const ult = qtd ? `Último: ${c.historico[0].data}` : 'Sem registros';
+    return `<div class="cliente-card" onclick="irDetalheCliente(${c.id})">
+      <div>
+        <div class="cliente-nome">${esc(c.nome)}</div>
+        <div class="cliente-meta">${ult} · ${qtd} reg.</div>
+      </div>
+      <span class="badge ${bClass}">${bTxt}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ---- Adicionar cliente ---- */
+function adicionarCliente() {
+  const inp = document.getElementById('inputNome');
+  const nome = inp.value.trim();
+  if (!nome) return;
+  clientes.unshift({ id: Date.now(), nome, historico: [] });
+  salvar(); renderLista();
+  inp.value = '';
+}
+
+/* ---- Navegação ---- */
+function irDetalheCliente(id) {
+  clienteId = id;
+  const c = clientes.find(x => x.id === id);
+  document.getElementById('detalheNome').textContent = c.nome;
+  renderHistorico(c);
+  document.getElementById('view-lista').style.display = 'none';
+  document.getElementById('view-detalhe').style.display = 'block';
+}
+
+function irLista() {
+  document.getElementById('view-detalhe').style.display = 'none';
+  document.getElementById('view-lista').style.display = 'block';
+  renderLista();
+}
+
+function irNovoReg() {
+  // Reset form
+  fotoBase64 = null;
+  document.getElementById('fPh').value = '';
+  document.getElementById('fCloro').value = '';
+  document.getElementById('fAlcal').value = '';
+  document.getElementById('fObs').value = '';
+  document.getElementById('msgOk').classList.remove('vis');
+  document.getElementById('btnAnalisar').disabled = true;
+  document.getElementById('txtAnalisar').textContent = 'Analisar foto com IA';
+  document.getElementById('spinnerAnalisar').style.display = 'none';
+
+  const slot = document.getElementById('fotoSlot');
+  slot.querySelector('img')?.remove();
+  slot.querySelector('.overlay-escuro')?.remove();
+  slot.querySelector('.status-analise')?.remove();
+  slot.querySelector('.btn-rem-foto')?.remove();
+  slot.classList.remove('tem-foto');
+  document.getElementById('fotoPlaceholder').style.display = 'flex';
+
+  document.getElementById('view-detalhe').style.display = 'none';
+  document.getElementById('view-novo-reg').style.display = 'block';
+}
+
+function irDetalhe() {
+  document.getElementById('view-novo-reg').style.display = 'none';
+  document.getElementById('view-detalhe').style.display = 'block';
+  const c = clientes.find(x => x.id === clienteId);
+  renderHistorico(c);
+}
+
+/* ---- Histórico ---- */
+function renderHistorico(c) {
+  const el = document.getElementById('historicoLista');
+  if (!c.historico?.length) {
+    el.innerHTML = '<div class="vazio">Nenhum registro ainda.<br>Toque em "+ Registro" para adicionar.</div>';
+    return;
+  }
+  el.innerHTML = c.historico.map(r => {
+    const fotoHtml = r.fotoThumb
+      ? `<img class="reg-foto" src="${r.fotoThumb}" alt="Foto do teste">`
+      : '';
+    const params = PARAMS.map(p => {
+      if (!r[p.key] && r[p.key] !== 0) return `<div class="param-box"><div class="p-label">${p.label.toUpperCase()}</div><div class="p-valor neutro">—</div></div>`;
+      const v = parseFloat(r[p.key]);
+      const cls = (v >= p.min && v <= p.max) ? 'ok' : 'atencao';
+      return `<div class="param-box"><div class="p-label">${p.label.toUpperCase()}</div><div class="p-valor ${cls}">${r[p.key]}${p.unit}</div></div>`;
+    }).join('');
+    const obs = r.obs ? `<div class="reg-obs">${esc(r.obs)}</div>` : '';
+    return `<div class="reg-card">
+      <div class="reg-data">${r.data} · ${r.hora}</div>
+      ${fotoHtml}
+      <div class="params-row">${params}</div>
+      ${obs}
+    </div>`;
+  }).join('');
+}
+
+/* ---- Foto ---- */
+function carregarFoto(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    fotoBase64 = e.target.result;
+    const slot = document.getElementById('fotoSlot');
+
+    slot.querySelector('img')?.remove();
+    slot.querySelector('.overlay-escuro')?.remove();
+    slot.querySelector('.status-analise')?.remove();
+    slot.querySelector('.btn-rem-foto')?.remove();
+
+    document.getElementById('fotoPlaceholder').style.display = 'none';
+    slot.classList.add('tem-foto');
+
+    const img = document.createElement('img');
+    img.src = fotoBase64;
+    slot.appendChild(img);
+
+    const ov = document.createElement('div');
+    ov.className = 'overlay-escuro';
+    slot.appendChild(ov);
+
+    const btnR = document.createElement('button');
+    btnR.className = 'btn-rem-foto';
+    btnR.innerHTML = '×';
+    btnR.onclick = e => { e.stopPropagation(); removerFoto(); };
+    slot.appendChild(btnR);
+
+    document.getElementById('btnAnalisar').disabled = false;
+    document.getElementById('txtAnalisar').textContent = 'Analisar foto com IA';
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function removerFoto() {
+  fotoBase64 = null;
+  const slot = document.getElementById('fotoSlot');
+  slot.querySelector('img')?.remove();
+  slot.querySelector('.overlay-escuro')?.remove();
+  slot.querySelector('.status-analise')?.remove();
+  slot.querySelector('.btn-rem-foto')?.remove();
+  slot.classList.remove('tem-foto');
+  document.getElementById('fotoPlaceholder').style.display = 'flex';
+  document.getElementById('btnAnalisar').disabled = true;
+  document.getElementById('txtAnalisar').textContent = 'Analisar foto com IA';
+}
+
+/* ---- Analisar foto com IA ---- */
+async function analisarFoto() {
+  if (!fotoBase64) return;
+
+  const btn = document.getElementById('btnAnalisar');
+  const spinner = document.getElementById('spinnerAnalisar');
+  const txt = document.getElementById('txtAnalisar');
+
+  btn.disabled = true;
+  spinner.style.display = 'block';
+  txt.textContent = 'Analisando...';
+
+  try {
+    // Extrair dados da imagem diretamente
+    const match = fotoBase64.match(/^data:([^;]+);base64,(.+)$/);
+    if (!match) throw new Error('Formato invalido');
+
+    const mediaType = match[1];
+    const imageData = match[2];
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 200,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: mediaType, data: imageData } },
+            { type: 'text', text: 'Este e um kit de teste de agua de piscina. Analise as cores dos tubos comparando com a escala de cores ao lado. Retorne APENAS este JSON sem nenhum texto adicional: {"ph": "valor", "cloro": "valor", "alcal": null}. Use null para alcalinidade pois nao ha escala para ela. Use ponto decimal.' }
+          ]
+        }]
+      })
+    });
+
+    if (!resp.ok) {
+      const errText = await resp.text();
+      throw new Error('HTTP ' + resp.status + ': ' + errText);
+    }
+
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+
+    const raw = (data.content || []).map(function(b) { return b.text || ''; }).join('').trim();
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const valores = JSON.parse(clean);
+
+    if (valores.ph != null) document.getElementById('fPh').value = valores.ph;
+    if (valores.cloro != null) document.getElementById('fCloro').value = valores.cloro;
+    if (valores.alcal != null) document.getElementById('fAlcal').value = valores.alcal;
+
+    const slot = document.getElementById('fotoSlot');
+    slot.querySelector('.status-analise') && slot.querySelector('.status-analise').remove();
+    const statusDiv = document.createElement('div');
+    statusDiv.className = 'status-analise';
+    statusDiv.innerHTML = '<span class="chip-analisado">IA ANALISADA</span>';
+    slot.appendChild(statusDiv);
+
+    txt.textContent = 'Reanalisar foto';
+  } catch(e) {
+    console.error('Erro analise:', e.message);
+    txt.textContent = 'Erro: ' + e.message.substring(0, 40);
+  }
+
+  btn.disabled = false;
+  spinner.style.display = 'none';
+}
+
+/* ---- Gera thumbnail aguardando carregamento ---- */
+function gerarThumb(base64) {
+  return new Promise(resolve => {
+    if (!base64) { resolve(null); return; }
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 400;
+        canvas.height = Math.round(img.naturalHeight * 400 / img.naturalWidth);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.6));
+      } catch { resolve(null); }
+    };
+    img.onerror = () => resolve(null);
+    img.src = base64;
+  });
+}
+
+/* ---- Salvar registro ---- */
+async function salvarRegistro() {
+  const btnSalvar = document.querySelector('.btn-salvar');
+  btnSalvar.disabled = true;
+  btnSalvar.textContent = 'Salvando...';
+
+  const c = clientes.find(x => x.id === clienteId);
+  const agora = new Date();
+  const fotoThumb = await gerarThumb(fotoBase64);
+
+  const reg = {
+    data: agora.toLocaleDateString('pt-BR'),
+    hora: agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+    ph: document.getElementById('fPh').value,
+    cloro: document.getElementById('fCloro').value,
+    alcal: document.getElementById('fAlcal').value,
+    obs: document.getElementById('fObs').value.trim(),
+    fotoThumb,
+  };
+
+  c.historico.unshift(reg);
+  salvar();
+
+  btnSalvar.disabled = false;
+  btnSalvar.textContent = 'Salvar registro';
+
+  const msg = document.getElementById('msgOk');
+  msg.classList.add('vis');
+  setTimeout(() => { msg.classList.remove('vis'); irDetalhe(); }, 1200);
+}
+
+function esc(t) {
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+carregar();
+</script>
+</body>
+</html>
